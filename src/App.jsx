@@ -39,31 +39,14 @@ const ExerciseApp = () => {
   };
 
   const weekRoutine = [
-    { day: 0, name: 'Domingo', type: 'rest', title: 'Descanso', activities: ['Caminata ligera opcional', 'Recuperación activa'], color: 'bg-green-500', muscleGroup: null, calories: 0 },
-    { day: 1, name: 'Lunes', type: 'strength', title: 'Fuerza - Pecho y Brazos', activities: ['App Ejercicios en Casa (Pecho/Brazos) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'pecho', color: 'bg-blue-500', calories: caloriesBurnedPerActivity.strength },
-    { day: 2, name: 'Martes', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Mirador: 2.8 km subida + 2.8 km bajada'], color: 'bg-red-500', muscleGroup: null, calories: caloriesBurnedPerActivity.cuerda + caloriesBurnedPerActivity.mirador },
-    { day: 3, name: 'Miércoles', type: 'strength', title: 'Fuerza - Espalda y Hombros', activities: ['App Ejercicios en Casa (Espalda/Hombros) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'espalda', color: 'bg-blue-500', calories: caloriesBurnedPerActivity.strength },
-    { day: 4, name: 'Jueves', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Vueltas al estadio o caminata: 30-45 min'], color: 'bg-red-500', muscleGroup: null, calories: caloriesBurnedPerActivity.cardio },
-    { day: 5, name: 'Viernes', type: 'strength', title: 'Fuerza - Piernas', activities: ['App Ejercicios en Casa (Piernas) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'piernas', color: 'bg-blue-500', calories: caloriesBurnedPerActivity.strength },
-    { day: 6, name: 'Sábado', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Mirador o estadio: 30-45 min'], color: 'bg-red-500', muscleGroup: null, calories: caloriesBurnedPerActivity.cardio }
+    { day: 0, name: 'Domingo', type: 'rest', title: 'Descanso', activities: ['Caminata ligera opcional', 'Recuperación activa'], muscleGroup: null, calories: 0 },
+    { day: 1, name: 'Lunes', type: 'strength', title: 'Fuerza - Pecho y Brazos', activities: ['App Ejercicios en Casa (Pecho/Brazos) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'pecho', calories: caloriesBurnedPerActivity.strength },
+    { day: 2, name: 'Martes', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Mirador: 2.8 km subida + 2.8 km bajada'], muscleGroup: null, calories: caloriesBurnedPerActivity.cuerda + caloriesBurnedPerActivity.mirador },
+    { day: 3, name: 'Miércoles', type: 'strength', title: 'Fuerza - Espalda y Hombros', activities: ['App Ejercicios en Casa (Espalda/Hombros) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'espalda', calories: caloriesBurnedPerActivity.strength },
+    { day: 4, name: 'Jueves', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Vueltas al estadio o caminata: 30-45 min'], muscleGroup: null, calories: caloriesBurnedPerActivity.cardio },
+    { day: 5, name: 'Viernes', type: 'strength', title: 'Fuerza - Piernas', activities: ['App Ejercicios en Casa (Piernas) - 30-40 min', 'Ejercicios con mancuernas'], muscleGroup: 'piernas', calories: caloriesBurnedPerActivity.strength },
+    { day: 6, name: 'Sábado', type: 'cardio', title: 'Cardio', activities: ['Saltar la cuerda: 15-20 min', 'Mirador o estadio: 30-45 min'], muscleGroup: null, calories: caloriesBurnedPerActivity.cardio }
   ];
-
-  useEffect(() => {
-    const checkReminder = () => {
-      const now = new Date();
-      const [hours, minutes] = reminderTime.split(':');
-      const reminderDate = new Date();
-      reminderDate.setHours(parseInt(hours), parseInt(minutes), 0);
-      if (Math.abs(now - reminderDate) < 60000 && !completedDays[currentDay]) {
-        setShowReminder(true);
-        if (Notification.permission === 'granted') {
-          new Notification('¡Hora de entrenar!', { body: `${weekRoutine[currentDay].title}`, icon: '💪' });
-        }
-      }
-    };
-    const interval = setInterval(checkReminder, 60000);
-    return () => clearInterval(interval);
-  }, [reminderTime, currentDay, completedDays]);
 
   useEffect(() => {
     let weekCompletions = 0, totalCalories = 0, totalWorkouts = 0;
@@ -85,92 +68,324 @@ const ExerciseApp = () => {
     setCompletedDays(prev => ({ ...prev, [day]: !prev[day] }));
   };
 
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom right, #111827, #1e3a8a, #111827)',
+      color: 'white',
+      padding: '1rem'
+    },
+    maxWidth: {
+      maxWidth: '90rem',
+      margin: '0 auto'
+    },
+    header: {
+      textAlign: 'center',
+      marginBottom: '2rem',
+      paddingTop: '1.5rem'
+    },
+    title: {
+      fontSize: '2rem',
+      fontWeight: 'bold',
+      marginBottom: '0.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.75rem'
+    },
+    subtitle: {
+      color: '#d1d5db',
+      fontSize: '1rem'
+    },
+    statsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1rem',
+      marginBottom: '1.5rem'
+    },
+    statCard: {
+      background: 'linear-gradient(to bottom right, #1e40af, #1e3a8a)',
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    },
+    statValue: {
+      fontSize: '1.875rem',
+      fontWeight: 'bold'
+    },
+    reminderBox: {
+      background: '#1f2937',
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      marginBottom: '1.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: '1rem'
+    },
+    input: {
+      background: '#374151',
+      border: 'none',
+      borderRadius: '0.375rem',
+      padding: '0.5rem 0.75rem',
+      color: 'white',
+      fontSize: '1rem'
+    },
+    button: {
+      background: '#eab308',
+      color: 'black',
+      border: 'none',
+      borderRadius: '0.375rem',
+      padding: '0.5rem 1rem',
+      fontWeight: '600',
+      cursor: 'pointer'
+    },
+    weekGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+      gap: '1rem',
+      marginBottom: '2rem'
+    },
+    dayCard: {
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      cursor: 'pointer',
+      border: '2px solid transparent',
+      transition: 'transform 0.2s'
+    },
+    dayCardHover: {
+      transform: 'scale(1.05)'
+    },
+    mainContent: {
+      background: '#1f2937',
+      borderRadius: '0.5rem',
+      padding: '1.5rem',
+      marginBottom: '1.5rem'
+    },
+    contentTitle: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      marginBottom: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem'
+    },
+    exerciseGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: '1rem'
+    },
+    exerciseCard: {
+      background: '#374151',
+      borderRadius: '0.5rem',
+      padding: '1rem'
+    },
+    videoButton: {
+      width: '100%',
+      background: '#ef4444',
+      color: 'white',
+      border: 'none',
+      borderRadius: '0.375rem',
+      padding: '0.5rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.5rem',
+      marginTop: '1rem'
+    },
+    modal: {
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.9)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+      zIndex: 50
+    },
+    modalContent: {
+      background: '#1f2937',
+      borderRadius: '0.5rem',
+      padding: '1.5rem',
+      maxWidth: '56rem',
+      width: '100%'
+    },
+    closeButton: {
+      background: 'none',
+      border: 'none',
+      color: 'white',
+      fontSize: '1.875rem',
+      cursor: 'pointer'
+    },
+    reminderAlert: {
+      position: 'fixed',
+      top: '1rem',
+      right: '1rem',
+      background: '#eab308',
+      color: 'black',
+      borderRadius: '0.5rem',
+      padding: '1rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.75rem',
+      zIndex: 50,
+      animation: 'bounce 1s infinite'
+    },
+    footer: {
+      background: 'rgba(217, 119, 6, 0.3)',
+      border: '2px solid #eab308',
+      borderRadius: '0.5rem',
+      padding: '1.5rem'
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8 pt-6">
-          <h1 className="text-4xl font-bold mb-2 flex items-center justify-center gap-3"><Dumbbell className="w-10 h-10" />Mi Rutina Semanal</h1>
-          <p className="text-gray-300">Peso: 76 kg | Objetivo: Definición</p>
+    <div style={styles.container}>
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+      `}</style>
+      <div style={styles.maxWidth}>
+        <div style={styles.header}>
+          <h1 style={styles.title}>
+            <Dumbbell size={40} />
+            Mi Rutina Semanal
+          </h1>
+          <p style={styles.subtitle}>Peso: 76 kg | Objetivo: Definición</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div><p className="text-gray-200 text-sm">Entrenamientos</p><p className="text-3xl font-bold">{stats.weekCompletions}/6</p></div>
-              <CheckCircle className="w-10 h-10 opacity-50" />
+        <div style={styles.statsGrid}>
+          <div style={styles.statCard}>
+            <div>
+              <p style={{color: '#d1d5db', fontSize: '0.875rem'}}>Entrenamientos</p>
+              <p style={styles.statValue}>{stats.weekCompletions}/6</p>
             </div>
+            <CheckCircle size={40} opacity={0.5} />
           </div>
 
-          <div className="bg-gradient-to-br from-orange-600 to-orange-800 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div><p className="text-gray-200 text-sm">Calorías (Semana)</p><p className="text-3xl font-bold">{stats.totalCalories}</p></div>
-              <Flame className="w-10 h-10 opacity-50" />
+          <div style={{...styles.statCard, background: 'linear-gradient(to bottom right, #b45309, #92400e)'}}>
+            <div>
+              <p style={{color: '#d1d5db', fontSize: '0.875rem'}}>Calorías</p>
+              <p style={styles.statValue}>{stats.totalCalories}</p>
             </div>
+            <Flame size={40} opacity={0.5} />
           </div>
 
-          <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div><p className="text-gray-200 text-sm">Promedio/Día</p><p className="text-3xl font-bold">{stats.weekCompletions > 0 ? Math.round(stats.totalCalories / stats.weekCompletions) : 0}</p></div>
-              <TrendingUp className="w-10 h-10 opacity-50" />
+          <div style={{...styles.statCard, background: 'linear-gradient(to bottom right, #15803d, #166534)'}}>
+            <div>
+              <p style={{color: '#d1d5db', fontSize: '0.875rem'}}>Promedio/Día</p>
+              <p style={styles.statValue}>{stats.weekCompletions > 0 ? Math.round(stats.totalCalories / stats.weekCompletions) : 0}</p>
             </div>
+            <TrendingUp size={40} opacity={0.5} />
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div><p className="text-gray-200 text-sm">Total Entrenamientos</p><p className="text-3xl font-bold">{stats.totalWorkouts}</p></div>
-              <Award className="w-10 h-10 opacity-50" />
+          <div style={{...styles.statCard, background: 'linear-gradient(to bottom right, #6b21a8, #581c87)'}}>
+            <div>
+              <p style={{color: '#d1d5db', fontSize: '0.875rem'}}>Entrenamientos</p>
+              <p style={styles.statValue}>{stats.totalWorkouts}</p>
             </div>
+            <Award size={40} opacity={0.5} />
           </div>
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Bell className="w-6 h-6 text-yellow-400" />
-            <div><p className="font-semibold">Recordatorio Diario</p><p className="text-sm text-gray-400">Configura tu hora de entrenamiento</p></div>
+        <div style={styles.reminderBox}>
+          <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+            <Bell size={24} color="#facc15" />
+            <div>
+              <p style={{fontWeight: '600'}}>Recordatorio Diario</p>
+              <p style={{fontSize: '0.875rem', color: '#9ca3af'}}>Configura tu hora de entrenamiento</p>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5" />
-            <input type="time" value={reminderTime} onChange={(e) => setReminderTime(e.target.value)} className="bg-gray-700 rounded px-3 py-2 text-white" />
-            <button onClick={requestNotificationPermission} className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded text-sm font-semibold">Activar</button>
+          <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+            <Clock size={20} />
+            <input type="time" value={reminderTime} onChange={(e) => setReminderTime(e.target.value)} style={styles.input} />
+            <button onClick={requestNotificationPermission} style={styles.button}>Activar</button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div style={styles.weekGrid}>
           {weekRoutine.map((routine) => (
-            <div key={routine.day} className={`${routine.color} bg-opacity-20 border-2 ${currentDay === routine.day ? 'border-yellow-400 shadow-lg shadow-yellow-400/50' : 'border-transparent'} rounded-lg p-4 hover:scale-105 transition-transform cursor-pointer`} onClick={() => setCurrentDay(routine.day)}>
-              <div className="flex justify-between items-start mb-3">
-                <div><h3 className="font-bold text-lg">{routine.name}</h3><p className="text-sm opacity-80">{routine.title}</p></div>
-                <button onClick={(e) => { e.stopPropagation(); toggleDayComplete(routine.day); }} className={`${completedDays[routine.day] ? 'text-green-400' : 'text-gray-500'} hover:scale-110 transition-transform`}><CheckCircle className="w-6 h-6" /></button>
+            <div
+              key={routine.day}
+              style={{
+                ...styles.dayCard,
+                background: routine.type === 'strength' ? 'rgba(30, 64, 175, 0.2)' : routine.type === 'cardio' ? 'rgba(220, 38, 38, 0.2)' : 'rgba(34, 197, 94, 0.2)',
+                border: currentDay === routine.day ? '2px solid #facc15' : '2px solid transparent',
+                boxShadow: currentDay === routine.day ? '0 0 20px rgba(250, 204, 21, 0.5)' : 'none'
+              }}
+              onClick={() => setCurrentDay(routine.day)}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem'}}>
+                <div>
+                  <h3 style={{fontWeight: 'bold', fontSize: '1.125rem', margin: 0}}>{routine.name}</h3>
+                  <p style={{fontSize: '0.875rem', opacity: 0.8, margin: '0.25rem 0 0 0'}}>{routine.title}</p>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleDayComplete(routine.day); }}
+                  style={{background: 'none', border: 'none', cursor: 'pointer', color: completedDays[routine.day] ? '#4ade80' : '#9ca3af'}}
+                >
+                  <CheckCircle size={24} />
+                </button>
               </div>
-              <div className="space-y-1 mb-3">{routine.activities.slice(0, 1).map((activity, idx) => (<p key={idx} className="text-sm opacity-90">• {activity}</p>))}</div>
-              {routine.calories > 0 && (<div className="bg-black bg-opacity-40 rounded px-2 py-1 flex items-center gap-1"><Flame className="w-4 h-4 text-orange-400" /><span className="text-xs font-semibold">{routine.calories} cal</span></div>)}
+              {routine.calories > 0 && (
+                <div style={{background: 'rgba(0, 0, 0, 0.4)', borderRadius: '0.375rem', padding: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.875rem', fontWeight: '600'}}>
+                  <Flame size={16} color="#fb923c" />
+                  {routine.calories} cal
+                </div>
+              )}
             </div>
           ))}
         </div>
 
-        <div className="bg-gray-800 rounded-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2"><Calendar className="w-7 h-7" />{weekRoutine[currentDay].name} - {weekRoutine[currentDay].title}</h2>
+        <div style={styles.mainContent}>
+          <h2 style={styles.contentTitle}>
+            <Calendar size={28} />
+            {weekRoutine[currentDay].name} - {weekRoutine[currentDay].title}
+          </h2>
 
           {weekRoutine[currentDay].type === 'strength' && (
             <div>
-              <div className="bg-blue-900 bg-opacity-30 rounded-lg p-4 mb-6">
-                <h3 className="text-lg font-bold mb-2 text-blue-300">📱 Rutina en la App</h3>
-                <p className="text-gray-300">1. Abre "Ejercicios en Casa"</p>
-                <p className="text-gray-300">2. Selecciona: <span className="font-bold text-white">{weekRoutine[currentDay].muscleGroup === 'pecho' ? 'Pecho y Brazos' : weekRoutine[currentDay].muscleGroup === 'espalda' ? 'Espalda y Hombros' : 'Piernas'}</span></p>
-                <p className="text-gray-300">3. Nivel: <span className="font-bold text-white">Moderado</span></p>
-                <div className="mt-3 flex items-center gap-2 bg-orange-900 bg-opacity-50 rounded px-3 py-2"><Flame className="w-5 h-5 text-orange-400" /><span className="text-sm">Quemarás ~{weekRoutine[currentDay].calories} calorías</span></div>
+              <div style={{background: 'rgba(30, 58, 138, 0.3)', borderRadius: '0.5rem', padding: '1rem', marginBottom: '1.5rem'}}>
+                <h3 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#93c5fd'}}>📱 Rutina en la App</h3>
+                <p style={{color: '#d1d5db', margin: '0.25rem 0'}}>1. Abre "Ejercicios en Casa"</p>
+                <p style={{color: '#d1d5db', margin: '0.25rem 0'}}>2. Selecciona: <span style={{fontWeight: 'bold', color: 'white'}}>{weekRoutine[currentDay].muscleGroup === 'pecho' ? 'Pecho y Brazos' : weekRoutine[currentDay].muscleGroup === 'espalda' ? 'Espalda y Hombros' : 'Piernas'}</span></p>
+                <p style={{color: '#d1d5db', margin: '0.25rem 0'}}>3. Nivel: <span style={{fontWeight: 'bold', color: 'white'}}>Moderado</span></p>
+                <div style={{marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(180, 83, 9, 0.5)', borderRadius: '0.375rem', padding: '0.75rem'}}>
+                  <Flame size={20} color="#fb923c" />
+                  <span style={{fontSize: '0.875rem'}}>Quemarás ~{weekRoutine[currentDay].calories} calorías</span>
+                </div>
               </div>
 
-              <h3 className="text-xl font-bold mb-4 text-blue-400 flex items-center gap-2"><Dumbbell className="w-6 h-6" />Ejercicios con Mancuernas</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <h3 style={styles.contentTitle}>
+                <Dumbbell size={24} />
+                Ejercicios con Mancuernas
+              </h3>
+              <div style={styles.exerciseGrid}>
                 {dumbbellExercises[weekRoutine[currentDay].muscleGroup].map((exercise, idx) => (
-                  <div key={idx} className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors">
-                    <div className="mb-3">
-                      <h4 className="font-bold text-lg mb-2">{exercise.name}</h4>
-                      <div className="flex items-center gap-2 text-sm text-blue-300 mb-1"><Dumbbell className="w-4 h-4" /><span>{exercise.weight}</span></div>
-                      <p className="text-sm text-gray-300">Series y Reps: <span className="font-semibold text-white">{exercise.sets}</span></p>
+                  <div key={idx} style={styles.exerciseCard}>
+                    <h4 style={{fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.5rem'}}>{exercise.name}</h4>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: '#93c5fd', marginBottom: '0.25rem'}}>
+                      <Dumbbell size={16} />
+                      {exercise.weight}
                     </div>
-                    <button onClick={() => setSelectedExercise(exercise)} className="w-full bg-red-500 hover:bg-red-600 py-2 rounded flex items-center justify-center gap-2 font-semibold transition-colors"><PlayCircle className="w-5 h-5" />Ver Video Tutorial</button>
+                    <p style={{fontSize: '0.875rem', color: '#d1d5db'}}>Series: <span style={{fontWeight: '600', color: 'white'}}>{exercise.sets}</span></p>
+                    <button onClick={() => setSelectedExercise(exercise)} style={styles.videoButton}>
+                      <PlayCircle size={20} />
+                      Ver Video
+                    </button>
                   </div>
                 ))}
               </div>
@@ -178,28 +393,45 @@ const ExerciseApp = () => {
           )}
 
           {weekRoutine[currentDay].type === 'cardio' && (
-            <div className="bg-gray-700 rounded-lg p-6"><Heart className="w-12 h-12 text-red-400 mb-4" /><h3 className="text-xl font-bold mb-4">Sesión de Cardio</h3>
-              <div className="space-y-4 mb-4">
-                <div className="bg-gray-800 rounded p-4"><p className="text-lg font-semibold mb-1">🔥 Parte 1: Saltar la Cuerda</p><p className="text-gray-300">Duración: 15-20 minutos</p></div>
-                <div className="bg-gray-800 rounded p-4"><p className="text-lg font-semibold mb-1">🏃 Parte 2: {currentDay === 2 ? 'Mirador Bello Amanecer' : 'Mirador o Estadio'}</p><p className="text-gray-300">{currentDay === 2 ? 'Distancia: 5.6 km (2.8 km subida + 2.8 km bajada)' : 'Duración: 30-45 minutos'}</p></div>
+            <div style={{background: '#374151', borderRadius: '0.5rem', padding: '1.5rem'}}>
+              <Heart size={48} color="#f87171" style={{marginBottom: '1rem'}} />
+              <h3 style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem'}}>Sesión de Cardio</h3>
+              <div style={{display: 'grid', gap: '1rem', marginBottom: '1rem'}}>
+                <div style={{background: '#1f2937', borderRadius: '0.375rem', padding: '1rem'}}>
+                  <p style={{fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.25rem'}}>🔥 Parte 1: Saltar la Cuerda</p>
+                  <p style={{color: '#d1d5db'}}>Duración: 15-20 minutos</p>
+                </div>
+                <div style={{background: '#1f2937', borderRadius: '0.375rem', padding: '1rem'}}>
+                  <p style={{fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.25rem'}}>🏃 Parte 2: {currentDay === 2 ? 'Mirador Bello Amanecer' : 'Mirador o Estadio'}</p>
+                  <p style={{color: '#d1d5db'}}>{currentDay === 2 ? 'Distancia: 5.6 km' : 'Duración: 30-45 minutos'}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 bg-orange-900 bg-opacity-50 rounded px-3 py-2"><Flame className="w-5 h-5 text-orange-400" /><span className="text-sm">Quemarás ~{weekRoutine[currentDay].calories} calorías</span></div>
+              <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(180, 83, 9, 0.5)', borderRadius: '0.375rem', padding: '0.75rem'}}>
+                <Flame size={20} color="#fb923c" />
+                <span style={{fontSize: '0.875rem'}}>Quemarás ~{weekRoutine[currentDay].calories} calorías</span>
+              </div>
             </div>
           )}
 
           {weekRoutine[currentDay].type === 'rest' && (
-            <div className="bg-gray-700 rounded-lg p-6 text-center"><p className="text-6xl mb-4">😴</p><h3 className="text-2xl font-bold mb-3">Día de Descanso</h3><p className="text-gray-300 mb-4">Tu cuerpo necesita recuperarse</p></div>
+            <div style={{background: '#374151', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center'}}>
+              <p style={{fontSize: '3rem', margin: 0}}>😴</p>
+              <h3 style={{fontSize: '1.5rem', fontWeight: 'bold', margin: '1rem 0 0.5rem 0'}}>Día de Descanso</h3>
+              <p style={{color: '#d1d5db', margin: 0}}>Tu cuerpo necesita recuperarse</p>
+            </div>
           )}
         </div>
 
         {selectedExercise && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center p-4 z-50">
-            <div className="bg-gray-800 rounded-lg p-6 max-w-4xl w-full">
-              <div className="flex justify-between items-start mb-4">
-                <div><h3 className="text-2xl font-bold mb-2">{selectedExercise.name}</h3></div>
-                <button onClick={() => setSelectedExercise(null)} className="text-3xl hover:text-red-500">✕</button>
+          <div style={styles.modal}>
+            <div style={styles.modalContent}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem'}}>
+                <div>
+                  <h3 style={{fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem'}}>{selectedExercise.name}</h3>
+                </div>
+                <button onClick={() => setSelectedExercise(null)} style={styles.closeButton}>✕</button>
               </div>
-              <div className="aspect-video w-full bg-black rounded overflow-hidden">
+              <div style={{aspectRatio: '16/9', width: '100%', background: 'black', borderRadius: '0.375rem', overflow: 'hidden'}}>
                 <iframe width="100%" height="100%" src={selectedExercise.video} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
               </div>
             </div>
@@ -207,22 +439,22 @@ const ExerciseApp = () => {
         )}
 
         {showReminder && (
-          <div className="fixed top-4 right-4 bg-yellow-500 text-black rounded-lg p-4 shadow-2xl animate-bounce z-50">
-            <div className="flex items-center gap-3">
-              <Bell className="w-6 h-6" />
-              <div><p className="font-bold">¡Hora de entrenar!</p><p className="text-sm">{weekRoutine[currentDay].title}</p></div>
-              <button onClick={() => setShowReminder(false)} className="ml-4 text-xl font-bold">✕</button>
+          <div style={styles.reminderAlert}>
+            <Bell size={24} />
+            <div>
+              <p style={{fontWeight: 'bold', margin: 0}}>¡Hora de entrenar!</p>
+              <p style={{fontSize: '0.875rem', margin: '0.25rem 0 0 0'}}>{weekRoutine[currentDay].title}</p>
             </div>
           </div>
         )}
 
-        <div className="bg-yellow-900 bg-opacity-30 border-2 border-yellow-500 rounded-lg p-6">
-          <h3 className="text-xl font-bold mb-4 text-yellow-400">⚡ Recordatorios Importantes</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <p>❌ Eliminar refrescos y reducir Doritos</p>
-            <p>💧 Beber 2-3 litros de agua al día</p>
-            <p>🍗 Mantener proteína alta</p>
-            <p>😴 Dormir 7-8 horas</p>
+        <div style={styles.footer}>
+          <h3 style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: '#facc15'}}>⚡ Recordatorios Importantes</h3>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem'}}>
+            <p style={{margin: 0}}>❌ Eliminar refrescos y reducir Doritos</p>
+            <p style={{margin: 0}}>💧 Beber 2-3 litros de agua al día</p>
+            <p style={{margin: 0}}>🍗 Mantener proteína alta</p>
+            <p style={{margin: 0}}>😴 Dormir 7-8 horas</p>
           </div>
         </div>
       </div>
