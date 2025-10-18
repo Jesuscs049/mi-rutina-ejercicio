@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "build"
+}
+```
+
+---
+
+## **ARCHIVO 3: `.gitignore`**
+```
+node_modules/
+build/
+.env
