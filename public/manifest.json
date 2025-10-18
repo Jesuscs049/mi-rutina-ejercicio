@@ -1,0 +1,8 @@
+{
+  "short_name": "Mi Rutina",
+  "name": "Mi Rutina de Ejercicio",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1a1a2e",
+  "background_color": "#1a1a2e"
+}
