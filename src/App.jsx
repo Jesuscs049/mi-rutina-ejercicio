@@ -172,7 +172,7 @@ const PsychologicalFitnessApp = () => {
                 <p style={{ fontSize: '3rem', margin: 0, animation: 'pulse 2s infinite' }}>❓</p>
                 <h3 style={{ fontWeight: 'bold', margin: '0.5rem 0', color: '#facc15' }}>HOY • AHORA</h3>
                 <p style={{ color: '#d1d5db', fontSize: '0.875rem', marginBottom: '1rem' }}>{userProfile.weight}kg • Decide</p>
-                <p style={{ fontSize: '0.875rem', color: '#fbbf24', marginBottom: '1rem', fontStyle: 'italic' }}"¿Qué versión de ti eres hoy?"</p>
+                <p style={{ fontSize: '0.875rem', color: '#fbbf24', marginBottom: '1rem', fontStyle: 'italic' }}>"¿Qué versión de ti eres hoy?"</p>
               </div>
 
               {/* FUTURO */}
@@ -320,7 +320,7 @@ const PsychologicalFitnessApp = () => {
                 <p>2 horas en TikTok = 1 entrenamientos completamente perdido</p>
                 <p>1 mes comiendo mal = 3 meses de dieta limpia</p>
                 <p style={{ marginTop: '1rem', color: '#fbbf24', fontWeight: 'bold' }}>
-                  ¿Vale {5} minutos de placer vs. {6} meses de trabajo perdido?
+                  ¿Vale 5 minutos de placer vs. 6 meses de trabajo perdido?
                 </p>
               </div>
             </div>
